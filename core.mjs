@@ -15,6 +15,29 @@ const FIELDS = Object.freeze({
   entry_requirements: 'string'
 });
 
+export function extractionResponseFormat() {
+  const properties = {};
+  for (const [field, kind] of Object.entries(FIELDS)) {
+    const value = kind.startsWith('enum:')
+      ? { type: ['string', 'null'], enum: [...kind.slice(5).split(','), null] }
+      : { type: [kind, 'null'] };
+    properties[field] = { type: 'object', additionalProperties: false,
+      properties: { value, quote: { type: ['string', 'null'] } }, required: ['value', 'quote'] };
+  }
+  return { type: 'json_schema', json_schema: { name: 'earncheck_extraction', strict: true,
+    schema: { type: 'object', additionalProperties: false, properties,
+      required: Object.keys(FIELDS) } } };
+}
+
+export function extractionShapeDiagnostic(candidate) {
+  const topLevelType = candidate === null ? 'null' : Array.isArray(candidate) ? 'array' : typeof candidate;
+  const keys = topLevelType === 'object' ? Object.keys(candidate) : [];
+  const expected = Object.keys(FIELDS);
+  return { top_level_type: topLevelType,
+    missing_expected_fields: expected.filter(field => !Object.hasOwn(candidate ?? {}, field)),
+    unexpected_key_count: keys.filter(field => !Object.hasOwn(FIELDS, field)).length };
+}
+
 export const FIELD_LABELS = Object.freeze({
   reward_type: 'Reward type', reward_amount: 'Advertised amount', reward_unit: 'Reward unit',
   listing_status: 'Listing status', award_capacity: 'Award capacity', awards_remaining: 'Awards remaining',
@@ -163,5 +186,6 @@ export function buildReport({ extraction, sourceText, sourceUrl, budget, horizon
 }
 
 export function modelInstruction() {
-  return `Extract only from the supplied listing text. Return one JSON object with EXACTLY these keys: ${Object.keys(FIELDS).join(', ')}. Each key maps to {"value":...,"quote":...}. The quote must be an exact contiguous substring of the supplied text and include enough local context to identify the field. Use {"value":null,"quote":null} for absent, ambiguous, negated, or merely implied facts. Never infer truth, current availability, or missing payment timing. reward_type is cash, token, credit, noncash, or null; cash requires explicit affirmative cash wording, not merely a dollar sign. listing_status is open, closed, or null. entry_fee is none, required, or null; a no-refund sentence is not a no-fee statement. Number fields are nonnegative numbers copied exactly from short quotes with only the relevant number, never a mixed reward/fee sentence. entry_fee_unit is an exact unit string such as USD or JPY, or null. String values must be exact substrings of their quotes. For payout_timing, "to be announced", "not stated", and similar phrases mean null. Do not include markdown or extra keys.`;
+  const types = Object.entries(FIELDS).map(([name, kind]) => `${name}: ${kind}`).join('; ');
+  return `Extract only from the supplied listing text. Return a JSON object with EXACTLY these 12 keys and types: ${types}. For EVERY key, return exactly {"value":...,"quote":...}; value must be a JSON number for number/integer fields, never a numeric string. Integers have no decimal part. Enum values are exactly one of their listed words. String values must be exact substrings of their quotes. Each non-null quote must be a short, exact, contiguous substring of the supplied text and include enough local context to identify that field. For absent, ambiguous, negated, contradicted, or merely implied facts use {"value":null,"quote":null}; never return a non-null value with a null quote. Never infer truth, current availability, or missing payment timing. reward_type cash needs affirmative cash wording, not merely a dollar sign. entry_fee none needs an explicit no-entry-fee statement; a no-refund sentence does not count. Numeric quotes must contain exactly one relevant number, with explicit field context; do not combine reward and fee amounts or include dates in amount quotes. reward_unit and entry_fee_unit are exact unit strings such as USD or JPY. For payout_timing, "to be announced", "not stated", and similar phrases mean null. Do not include markdown, prose, or extra keys.`;
 }

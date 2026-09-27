@@ -5,8 +5,10 @@ EarnCheck is a local, source-text-only bounty triage desk. Paste public listing 
 ## Status
 
 - Local interface and three clearly labelled **synthetic examples** work without a key. No SERV call occurs in example mode.
-- Live SERV integration is implemented and exercised with a mocked HTTP response. **No real SERV call has been completed yet.** A working account, API key, and one redacted live verification are required before calling this a live SERV demonstration.
+- A real `gpt-6-luna` SERV API call on 27 September 2026 returned a validated report for the included original synthetic fixture. OpenServ's console marked the successful response as a **cache hit**; this does not prove fresh upstream model inference. Its sanitized proof and normalized report are in [`evidence/`](evidence/). Two earlier single calls produced no report: one failed evidence validation, and one returned an extraction schema mismatch. The successful response does not establish performance on other listings.
 - No external account, posting, payment, submission, or deployment is performed by this project.
+
+The [recorded result viewer](docs/index.html) is a static page showing the saved synthetic SERV API result. It makes no API call and cannot analyze new listings. Its planned public URL is [dtdnetizen.github.io/earncheck](https://dtdnetizen.github.io/earncheck/), **pending publication and GitHub Pages enablement**; that URL is not yet verified as live. The actual EarnCheck application below is a local Node server and browser interface.
 
 ## Run locally
 
@@ -26,7 +28,7 @@ Click any example button. The examples are invented and use the reserved `.examp
 
 See [SERV-SETUP.md](SERV-SETUP.md). The server reads `SERV_API_KEY` from its process environment; it never sends the key to the browser or saves it in the project. `SERV_MODEL` defaults to `gpt-6-luna`, an ID in the [official model catalog](https://docs.openserv.ai/serv-reasoning/models). The server uses the fixed [chat completions endpoint](https://docs.openserv.ai/serv-reasoning/api/chat-completions) at `https://inference-api.openserv.ai/v1/chat/completions`. OpenServ's [API overview](https://docs.openserv.ai/serv-reasoning/api) requires a system prompt; this request includes one. The call sets `max_completion_tokens: 1100`, a 25-second timeout, and makes no retries or additional model calls. Current official documentation was checked on 27 September 2026.
 
-Live mode requires the operator to affirm that the pasted text is public or synthetic and contains no private buyer or account data. The browser sends that text to the local server; the server sends it only to the fixed SERV endpoint. It does not fetch the source URL, log input text, or persist it. The user can download a report JSON that intentionally contains quote snippets, source URL, input hash, timestamp, model, and mode; handle that file according to the source's sensitivity.
+Live mode requires the operator to affirm that the pasted text is public or synthetic and contains no private buyer or account data. The browser sends that text to the local server; the server sends it only to the fixed SERV endpoint. It does not fetch the source URL, log input text, or persist it. The request uses a strict JSON response schema generated from the local 12-field validator map; the local quote validator still checks the response. The user can download a report JSON that intentionally contains quote snippets, source URL, input hash, timestamp, model, and mode; handle that file according to the source's sensitivity.
 
 ## Evidence model
 
@@ -45,14 +47,16 @@ The UI inserts model and user text through `textContent`, not HTML parsing. API 
 
 ## Tests and files
 
-`npm test` runs focused validation and HTTP tests covering fabricated citations, credit versus cash, exhausted capacity, unknown timing, unsafe HTML as text, consent/key fail-closed behavior, request-size and Host/Origin restrictions, one mocked fixed-endpoint call, and invalid model evidence. `preview-desktop.png` is a CUA screenshot of the **synthetic example**, not a live SERV result.
+`npm test` runs focused validation and HTTP tests covering fabricated citations, credit versus cash, exhausted capacity, unknown timing, unsafe HTML as text, consent/key fail-closed behavior, request-size and Host/Origin restrictions, one mocked fixed-endpoint call, strict response-schema forwarding, and invalid model evidence. `preview-desktop.png` is a CUA screenshot of the **synthetic example**, not a live SERV result. The successful live evidence is an API call; a full browser UI live-flow screenshot has not been captured.
 
 - `server.mjs`: localhost HTTP server and fixed SERV integration.
 - `core.mjs`: extraction schema, validation, and conservative report.
 - `examples.mjs`: invented examples and prewritten extractions.
 - `index.html`, `styles.css`, `app.js`, `dom.mjs`: responsive interface.
 - `test/`: dependency-free Node test suite.
+- `evidence/`: nonprivate synthetic input, sanitized one-call proof, and normalized report from the successful live API verification.
+- `docs/index.html`: static recorded result viewer prepared for GitHub Pages; it is separate from the local API application.
 
 ## Hackathon boundary
 
-The [official hackathon page](https://www.openserv.ai/hackathon) lists the Open Track, no application fee, starter API access, and a 28 September 2026 00:00 UTC submission cutoff. It requires data collection enabled in the OpenServ console, a public X post tagging `@openservai`, and the official form. This repository makes none of those actions. A working live SERV run and required account settings must be verified before submission or any claim of eligibility.
+The [official hackathon page](https://www.openserv.ai/hackathon) lists the Open Track, no application fee, starter API access, and a 28 September 2026 00:00 UTC submission cutoff. It requires data collection enabled in the OpenServ console, a public X post tagging `@openservai`, and the official form. This repository makes none of those actions. Training/data-collection opt-in remained off or pending at the live verification; no hackathon entry or eligibility is claimed.
