@@ -6,9 +6,9 @@ EarnCheck is a local, source-text-only bounty triage desk. Paste public listing 
 
 - Local interface and three clearly labelled **synthetic examples** work without a key. No SERV call occurs in example mode.
 - A real `gpt-6-luna` SERV API call on 27 September 2026 returned a validated report for the included original synthetic fixture. OpenServ's console marked the successful response as a **cache hit**; this does not prove fresh upstream model inference. Its sanitized proof and normalized report are in [`evidence/`](evidence/). Two earlier single calls produced no report: one failed evidence validation, and one returned an extraction schema mismatch. The successful response does not establish performance on other listings.
-- No external account, posting, payment, submission, or deployment is performed by this project.
+- The source repository and recorded-result viewer are public. No payment or hackathon submission is claimed.
 
-The [recorded result viewer](docs/index.html) is a static page showing the saved synthetic SERV API result. It makes no API call and cannot analyze new listings. Its planned public URL is [dtdnetizen.github.io/earncheck](https://dtdnetizen.github.io/earncheck/), **pending publication and GitHub Pages enablement**; that URL is not yet verified as live. The actual EarnCheck application below is a local Node server and browser interface.
+The [recorded result viewer](https://dtdnetizen.github.io/earncheck/) is live on GitHub Pages and shows the saved synthetic SERV API result. The served HTML was verified byte-for-byte against [`docs/index.html`](docs/index.html) on 27 September 2026. It makes no API call and cannot analyze new listings. The [public source repository](https://github.com/dtdnetizen/earncheck) includes the local Node server and browser application used for new analyses; that application is not hosted on Pages.
 
 ## Run locally
 
