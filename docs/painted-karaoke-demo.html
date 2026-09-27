@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Painted Karaoke Kit · silent preview</title>
+  <style>
+    :root{color-scheme:dark;--bg:#111922;--panel:#182630;--border:#36505a;--ink:#f4eee0;--muted:#b1c2c1;--accent:#e5a76d;--teal:#92d9c2}
+    *{box-sizing:border-box}
+    body{margin:0;background:radial-gradient(circle at 8% 10%,#28434b 0,transparent 27rem),var(--bg);color:var(--ink);font-family:Segoe UI,Arial,sans-serif}
+    a{color:var(--teal)}a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--teal);outline-offset:4px}
+    .topbar{min-height:64px;padding:12px max(20px,calc((100vw - 1060px)/2));display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid var(--border);background:#101a21cc}
+    .brand{display:flex;align-items:center;gap:10px;letter-spacing:.13em;font-size:12px;font-weight:750}.brand b,.mark{color:var(--accent)}.mark{font-size:24px}
+    .topbar a{font-size:12px;text-decoration:none}.topbar a:hover{text-decoration:underline}
+    main{max-width:1100px;margin:auto;padding:35px 20px 42px}
+    .eyebrow,.tag{font-size:11px;letter-spacing:.16em;font-weight:800;color:var(--teal);text-transform:uppercase}
+    h1{font-size:clamp(40px,6vw,69px);line-height:1.02;letter-spacing:-.055em;margin:11px 0 14px}h1 em{font-family:Georgia,serif;color:var(--accent);font-weight:400}
+    .lead{font-size:16px;line-height:1.55;color:#d3dedd;max-width:720px;margin:0 0 23px}
+    .demo{background:linear-gradient(145deg,#1d2c35,#14202a);border:1px solid var(--border);border-radius:18px;padding:19px;box-shadow:0 20px 70px #080e1655}
+    .demo-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:13px}.demo-head h2{font-size:20px;letter-spacing:-.03em;margin:0}.tag{color:#f1c993;background:#5e432f;border:1px solid #98643b;padding:7px 9px;border-radius:99px;white-space:nowrap;font-size:10px;letter-spacing:.07em}
+    canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;border:1px solid #708582;border-radius:10px;background:#e3d7ae}
+    .controls{display:flex;gap:13px;align-items:center;margin-top:17px}button{min-width:86px;padding:10px 14px;border-radius:9px;border:1px solid var(--accent);background:var(--accent);color:#18212a;font:700 13px Segoe UI,Arial,sans-serif;cursor:pointer}button:hover{background:#f5bd86}input[type=range]{flex:1;min-width:65px;accent-color:var(--accent);cursor:pointer}.time{font-variant-numeric:tabular-nums;white-space:nowrap;color:#d5e0dd;font-size:13px}
+    .silent{color:var(--muted);font-size:12px;line-height:1.5;margin:10px 1px 0}.caption-accessible{color:#d3dedd;font-size:13px;min-height:1.6em;margin:8px 1px 0}.caption-accessible strong{color:var(--accent)}
+    .offer{margin:27px 0 0;display:grid;grid-template-columns:1fr auto;align-items:center;gap:20px}.offer h2{font-size:18px;margin:0 0 7px}.offer p{color:var(--muted);line-height:1.5;margin:0;font-size:14px}.buy{display:inline-block;background:var(--accent);border:1px solid var(--accent);border-radius:9px;padding:12px 17px;color:#18212a;font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap}.buy:hover{background:#f5bd86}
+    footer{border-top:1px solid #31454e;margin-top:30px;padding-top:16px;color:#91a7a8;font-size:11px;line-height:1.5}footer p{margin:5px 0}footer details{margin-top:11px}footer summary{cursor:pointer;color:#c0d1ce}footer pre{white-space:pre-wrap;font:11px/1.5 Segoe UI,Arial,sans-serif}
+    @media(max-width:640px){.topbar{padding:12px 15px}.brand{letter-spacing:.07em;font-size:11px}.topbar a{font-size:11px}main{padding:26px 14px 35px}.demo{padding:12px;border-radius:12px}.demo-head h2{font-size:17px}.controls{gap:8px;flex-wrap:wrap}.controls input{order:3;flex-basis:100%}.offer{grid-template-columns:1fr}.buy{justify-self:start}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="brand"><span class="mark" aria-hidden="true">✳</span><span>PAINTED <b>KARAOKE</b> KIT</span></div><a href="copperglass-qa.html#shop">← Back to Copperglass QA</a></header>
+  <main>
+    <p class="eyebrow">Interactive product preview</p>
+    <h1>Make every word <em>land.</em></h1>
+    <p class="lead">Preview a word-timed caption canvas over an original painted sea. Press play or scrub the timeline to see each synthetic word light up in time.</p>
+    <section class="demo" aria-label="Silent synthetic karaoke preview">
+      <div class="demo-head"><h2>Painted canvas</h2><span class="tag">Silent synthetic demo</span></div>
+      <canvas id="stage" width="1280" height="720" role="img" aria-label="Painted sea with a paper boat and word-timed captions">A painted sea with synthetic captions. Use the timeline below to explore the word timing.</canvas>
+      <div class="controls"><button id="play" type="button" aria-label="Play silent demo">▶ Play</button><input id="seek" type="range" min="0" max="19.2" step="0.01" value="0" aria-label="Seek silent demo, 0 to 19.2 seconds"><output class="time" id="clock" for="seek">0:00 / 0:19</output></div>
+      <p class="caption-accessible" id="caption" aria-live="polite"></p>
+      <p class="silent">This preview is silent. Playback uses a demo clock; there is no recording or imported file.</p>
+    </section>
+    <section class="offer" aria-label="Full kit">
+      <div><h2>Build your own timing in the full kit</h2><p>The $15 download includes an offline timing editor, an alignment helper, and JSON, SRT, and still PNG export. It does not transcribe audio or export video.</p></div>
+      <a class="buy" href="https://ko-fi.com/s/59dd719a94">View the $15 kit ↗</a>
+    </section>
+    <footer><p>AI-assisted original synthetic lyric and procedural painted scene. No music, voice, external image, font, analytics, or user file is included. Playback makes no network requests. Preview adapted from Painted Karaoke Kit by Copperglass QA (MIT License, © 2026 Copperglass QA).</p><p>The kit's original provenance notice credits John Heibel's MIT-licensed ClaudeAnimationBase. No ClaudeAnimationBase source or art is included here; his endorsement is not claimed.</p><details><summary>MIT notices and provenance</summary><pre>Painted Karaoke Kit MIT License
+Copyright (c) 2026 Copperglass QA
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+ClaudeAnimationBase upstream MIT notice, retained for provenance only:
+Copyright (c) 2026 John Heibel
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</pre></details></footer>
+  </main>
+  <script>
+  (()=>{
+    'use strict';
+    // The four synthetic lines and timings are copied from sample/timing.json in Painted Karaoke Kit v1.
+    const demo = {"schema_version":1,"title":"Untitled song","duration":19.2,"lines":[{"section":"Verse","text":"Paper boats cross a painted sea","start":0.6,"end":3.1,"words":[{"text":"Paper","start":0.6,"end":0.98,"estimated":false},{"text":"boats","start":1.0,"end":1.34,"estimated":false},{"text":"cross","start":1.38,"end":1.78,"estimated":false},{"text":"a","start":1.82,"end":1.98,"estimated":false},{"text":"painted","start":2.0,"end":2.48,"estimated":false},{"text":"sea","start":2.5,"end":3.1,"estimated":false}],"review":"matched"},{"section":"Verse","text":"Little lights keep time with me","start":4.2,"end":6.56,"words":[{"text":"Little","start":4.2,"end":4.55,"estimated":false},{"text":"lights","start":4.58,"end":4.96,"estimated":false},{"text":"keep","start":5.0,"end":5.32,"estimated":false},{"text":"time","start":5.36,"end":5.73,"estimated":false},{"text":"with","start":5.76,"end":5.98,"estimated":false},{"text":"me","start":6.02,"end":6.56,"estimated":false}],"review":"matched"},{"section":"Hook","text":"Watch the colors bloom tonight","start":8.05,"end":10.08,"words":[{"text":"Watch","start":8.05,"end":8.42,"estimated":false},{"text":"the","start":8.45,"end":8.64,"estimated":false},{"text":"colors","start":8.68,"end":9.2,"estimated":false},{"text":"bloom","start":9.25,"end":9.68,"estimated":false},{"text":"tonight","start":9.71,"end":10.08,"estimated":false}],"review":"matched"},{"section":"Hook","text":"Every word becomes a light","start":12.04,"end":14.2,"words":[{"text":"Every","start":12.04,"end":12.54,"estimated":false},{"text":"word","start":12.58,"end":12.95,"estimated":false},{"text":"becomes","start":12.98,"end":13.35,"estimated":false},{"text":"a","start":13.39,"end":13.55,"estimated":false},{"text":"light","start":13.6,"end":14.2,"estimated":false}],"review":"matched"}],"match":{"matched_tokens":22,"lyric_tokens":22,"unmatched_transcript_tokens":0}};
+    const canvas=document.getElementById('stage');
+    const ctx=canvas.getContext('2d');
+    const play=document.getElementById('play');
+    const seek=document.getElementById('seek');
+    const clock=document.getElementById('clock');
+    const caption=document.getElementById('caption');
+    let time=0,playing=false,lastStamp=0,lastLine=-1;
+    const format=n=>`${Math.floor(n/60)}:${String(Math.floor(n%60)).padStart(2,'0')}`;
+    function activeLine(t){for(let i=0;i<demo.lines.length;i++){const line=demo.lines[i],next=demo.lines[i+1];const end=Math.min(line.end+.9,next?next.start-.08:Infinity);if(t>=Math.max(0,line.start-.25)&&t<=end)return {index:i,line};}return null;}
+    function ellipse(x,y,rx,ry,color){ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();}
+    function layer(points,color){ctx.beginPath();ctx.moveTo(0,720);for(const [x,y] of points)ctx.lineTo(x,y);ctx.lineTo(1280,720);ctx.closePath();ctx.fillStyle=color;ctx.fill();}
+    function drawScene(t){
+      const sky=ctx.createLinearGradient(0,0,0,720);sky.addColorStop(0,'#e8d9af');sky.addColorStop(.55,'#d2e0c1');sky.addColorStop(1,'#a8c9bd');ctx.fillStyle=sky;ctx.fillRect(0,0,1280,720);
+      ellipse(984,122,74+5*Math.sin(t*.25),74+5*Math.sin(t*.25),'#f3b96d');ellipse(984,122,53,53,'#f6cb88');
+      layer([[0,350],[190,290],[410,356],[620,277],[850,340],[1050,263],[1280,350]],'#a4b9a3');
+      layer([[0,415],[175,370],[350,423],[665,329],[885,403],[1070,348],[1280,420]],'#809e9a');
+      const drift=Math.sin(t*.7)*9;
+      layer([[0,444+drift],[160,463],[320,443-drift],[480,462],[640,442+drift],[800,464],[960,442-drift],[1120,464],[1280,443+drift]],'#5f8d96');
+      layer([[0,521-drift],[160,536],[320,518+drift],[480,539],[640,518-drift],[800,536],[960,520+drift],[1120,539],[1280,520-drift]],'#426d83');
+      layer([[0,603+drift],[170,615],[340,603-drift],[510,618],[680,600+drift],[850,616],[1020,603-drift],[1190,618],[1280,607]],'#2d526b');
+      const bx=250+t*15,by=479+Math.sin(t*1.8)*5;
+      ctx.fillStyle='#f1e4c8';ctx.beginPath();ctx.moveTo(bx-56,by);ctx.lineTo(bx+63,by);ctx.lineTo(bx+34,by+19);ctx.lineTo(bx-39,by+19);ctx.closePath();ctx.fill();
+      ctx.strokeStyle='#29415b';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(bx,by-5);ctx.lineTo(bx,by-113);ctx.stroke();
+      ctx.fillStyle='#d77a64';ctx.beginPath();ctx.moveTo(bx-3,by-110);ctx.lineTo(bx-3,by-10);ctx.lineTo(bx-64,by-18);ctx.closePath();ctx.fill();
+      for(let i=0;i<18;i++){const x=(i*139+73)%1280,y=40+(i*89)%250;ellipse(x,y,1.6+Math.sin(t*2+i)*.5,1.6+Math.sin(t*2+i)*.5,'#fff7de');}
+      ctx.fillStyle='#1b3444';ctx.font='700 16px Segoe UI, sans-serif';ctx.fillText('PAINTED KARAOKE · ORIGINAL SYNTHETIC SCENE',35,42);
+    }
+    function drawCaption(t){
+      const active=activeLine(t);if(!active)return;const line=active.line;
+      ctx.font='600 42px Segoe UI, Arial, sans-serif';const max=1100,space=ctx.measureText(' ').width;const rows=[[]];let rowWidth=0;
+      line.words.forEach(word=>{const w=ctx.measureText(word.text).width;if(rows[rows.length-1].length&&rowWidth+space+w>max){rows.push([]);rowWidth=0;}rows[rows.length-1].push({word,width:w});rowWidth+=w+(rowWidth?space:0);});
+      const boxH=54*rows.length+40,boxY=618-boxH/2;ctx.fillStyle='#f6efdcf2';ctx.strokeStyle='#b48762';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(65,boxY,1150,boxH,13);ctx.fill();ctx.stroke();
+      rows.forEach((row,ri)=>{const width=row.reduce((sum,item)=>sum+item.width,0)+space*(row.length-1);let x=640-width/2;const y=boxY+56+ri*54;row.forEach(({word,width:w})=>{ctx.fillStyle=t>=word.end?'#314b5c':t>=word.start?'#c35f45':'#6c7f83';ctx.fillText(word.text,x,y);if(t>=word.start&&t<word.end){ctx.strokeStyle='#d08356';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x,y+7);ctx.lineTo(x+w*Math.min(1,(t-word.start)/(word.end-word.start)),y+7);ctx.stroke();}x+=w+space;});});
+    }
+    function render(){drawScene(time);drawCaption(time);seek.value=String(time);clock.value=`${format(time)} / ${format(demo.duration)}`;clock.textContent=clock.value;const active=activeLine(time),index=active?active.index:-1;if(index!==lastLine){caption.textContent=active?`On screen: ${active.line.text}`:'No words on screen';lastLine=index;}}
+    function setPlaying(value){playing=value;play.textContent=value?'Ⅱ Pause':'▶ Play';play.setAttribute('aria-label',value?'Pause silent demo':'Play silent demo');lastStamp=performance.now();if(value)requestAnimationFrame(tick);}
+    function tick(stamp){if(!playing)return;time=Math.min(demo.duration,time+Math.max(0,stamp-lastStamp)/1000);lastStamp=stamp;render();if(time>=demo.duration){setPlaying(false);return;}requestAnimationFrame(tick);}
+    play.addEventListener('click',()=>{if(playing){setPlaying(false);return;}if(time>=demo.duration)time=0;setPlaying(true);});
+    seek.addEventListener('input',()=>{time=Number(seek.value);lastStamp=performance.now();render();});
+    document.addEventListener('visibilitychange',()=>{if(document.hidden&&playing)setPlaying(false);});
+    render();
+  })();
+  </script>
+</body>
+</html>
