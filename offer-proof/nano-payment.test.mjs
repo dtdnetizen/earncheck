@@ -58,6 +58,7 @@ test('x402 challenge, verify, reserve before settle, confirmed receipt and idemp
   assert.equal(decoded.x402Version, 2);
   assert.equal(decoded.accepts[0].payTo, payTo);
   assert.equal(decoded.accepts[0].amount, priceRaw);
+  assert.equal(decoded.accepts[0].maxTimeoutSeconds, 60);
   const req = s.paidRequest(decoded.accepts[0]);
   const paid = await s.adapter.charge(req, { priceRaw, requestDigest: digest });
   assert.equal(paid.kind, 'paid'); assert.equal(paid.paymentId, paymentId);
@@ -68,6 +69,17 @@ test('x402 challenge, verify, reserve before settle, confirmed receipt and idemp
   assert.equal(retry.kind, 'paid'); assert.equal(s.calls.filter(x => x === 'settle').length, 1);
   await assert.rejects(() => s.adapter.charge(req, { priceRaw, requestDigest: 'b'.repeat(64) }),
     /payment_reserved_for_other_request/);
+});
+
+test('prepaid challenge gives the same 60-second work window', async () => {
+  const s = setup();
+  const challenge = await s.adapter.charge(s.challengeRequest, {
+    priceRaw: '10000000000000000000000000000000', requestDigest: digest, purpose: 'prepay'
+  });
+  const decoded = JSON.parse(Buffer.from(challenge.paymentRequired, 'base64').toString());
+  assert.equal(decoded.accepts[0].maxTimeoutSeconds, 60);
+  assert.equal(decoded.accepts[0].extra.work, 'required');
+  assert.deepEqual(s.calls, []);
 });
 
 test('an already-public block cannot establish a fresh reservation', async () => {

@@ -162,7 +162,9 @@ test('oversized body is rejected before payment and probe routes are free', asyn
   const handler = createHandler({ payment: { charge: async () => { charged++; return null; } },
     store: { get: async () => null, putIfAbsent: async () => null } });
   assert.equal((await handler(new Request('https://seller.example/health'))).status, 200);
-  assert.equal((await handler(new Request('https://seller.example/docs'))).status, 200);
+  const docs = await handler(new Request('https://seller.example/docs'));
+  assert.equal(docs.status, 200);
+  assert.equal((await docs.json()).payment.max_timeout_seconds, 60);
   const huge = await handler(new Request('https://seller.example/v1/offer-proof', {
     method: 'POST', body: 'x'.repeat(16385) }));
   assert.equal(huge.status, 413); assert.equal(charged, 0);

@@ -22,7 +22,7 @@ function decodeHeader(value) {
 }
 function requirements(payTo, amount) {
   return { scheme: 'exact', network: 'nano:mainnet', asset: 'XNO', payTo,
-    amount, maxTimeoutSeconds: 10, extra: { paymentFlow: 'upfront', work: 'required' } };
+    amount, maxTimeoutSeconds: 60, extra: { paymentFlow: 'upfront', work: 'required' } };
 }
 function sameRequirements(actual, expected) {
   return actual?.scheme === expected.scheme && actual?.network === expected.network &&

@@ -35,6 +35,8 @@ export function createHandler({ payment, store, now = () => new Date(), capabili
       service: 'Offer Proof Gate', version: '1.0',
       paid_unit: 'one bounded report on caller-supplied public listing text and 1-5 claimed evidence snippets',
       price: { network: 'nano:mainnet', asset: 'XNO', amount_raw: PRICE_RAW, amount_xno: '0.01' },
+      payment: { max_timeout_seconds: 60, work: 'required',
+        note: 'The x402 quote allows 60 seconds for the payer to prepare the signed send, including Nano work. This is client guidance, not a settlement or confirmation deadline.' },
       prepaid: { endpoint: 'POST /v1/prepay', price_raw: PREPAID_RAW, calls: 1000,
         recovery: 'POST /v1/prepay/recover with the client-generated recovery secret and confirmed payment ID' },
       endpoint: 'POST /v1/offer-proof', max_body_bytes: 16384,
