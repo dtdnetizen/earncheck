@@ -1,0 +1,11 @@
+{
+  "source_url": "https://bounty.example/offer/42",
+  "source_text": "Reward: 25 USDC. Status: Open. 0 awards remaining. No entry fee. Deadline: 2026-09-30T00:00:00Z.",
+  "claims": [
+    { "field": "reward", "value": { "amount": 25, "unit": "USDC" }, "quote": "Reward: 25 USDC" },
+    { "field": "status", "value": "open", "quote": "Status: Open" },
+    { "field": "awards_remaining", "value": 1, "quote": "0 awards remaining" },
+    { "field": "entry_fee", "value": "none", "quote": "No entry fee" },
+    { "field": "deadline", "value": "2026-09-30T00:00:00Z", "quote": "Deadline: 2026-09-30T00:00:00Z" }
+  ]
+}

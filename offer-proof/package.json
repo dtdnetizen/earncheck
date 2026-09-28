@@ -1,0 +1,13 @@
+{
+  "name": "copperglass-offer-proof",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test.mjs nano-hash.test.mjs nano-payment.test.mjs prepaid.test.mjs runtime.test.mjs",
+    "build": "esbuild site-worker.mjs --bundle --format=esm --platform=browser --target=es2022 --loader:.html=text --loader:.sql=text --outfile=dist/index.js"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}

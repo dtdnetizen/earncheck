@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "checked_at_utc": "2026-09-27T16:00:00.000Z",
+  "source_url": "https://bounty.example/offer/42",
+  "source_url_status": "caller_supplied_not_fetched",
+  "source_sha256": "3c5a36a1e847f466c41fab47f2d37bc352afed06390838cf16771ab579151d03",
+  "verdict": "quote_conflicts",
+  "availability_from_selected_quotes": "no_awards_indicated_by_selected_quotes",
+  "checks": [
+    {
+      "field": "reward",
+      "verdict": "quote_matches",
+      "reason": "claim_matches_quote",
+      "claimed": {
+        "amount": 25,
+        "unit": "USDC"
+      },
+      "observed": {
+        "amount": 25,
+        "unit": "USDC"
+      },
+      "quote": "Reward: 25 USDC"
+    },
+    {
+      "field": "status",
+      "verdict": "quote_matches",
+      "reason": "claim_matches_quote",
+      "claimed": "open",
+      "observed": "open",
+      "quote": "Status: Open"
+    },
+    {
+      "field": "awards_remaining",
+      "verdict": "quote_conflicts",
+      "reason": "claim_conflicts_with_quote",
+      "claimed": 1,
+      "observed": 0,
+      "quote": "0 awards remaining"
+    },
+    {
+      "field": "entry_fee",
+      "verdict": "quote_matches",
+      "reason": "claim_matches_quote",
+      "claimed": "none",
+      "observed": "none",
+      "quote": "No entry fee"
+    },
+    {
+      "field": "deadline",
+      "verdict": "quote_matches",
+      "reason": "claim_matches_quote",
+      "claimed": "2026-09-30T00:00:00Z",
+      "observed": "2026-09-30T00:00:00Z",
+      "quote": "Deadline: 2026-09-30T00:00:00Z"
+    }
+  ],
+  "scope": "Labeled quotes are checked against caller-supplied text only. Matching quotes do not prove a real/current offer. No live source, solvency, acceptance, payout, or AI eligibility verification."
+}
