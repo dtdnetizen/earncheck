@@ -1,0 +1,99 @@
+{
+  "name": "Household meeting notes to review drafts (synthetic, no writes)",
+  "nodes": [
+    {
+      "id": "manual-trigger",
+      "name": "Run synthetic sample",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "synthetic-note",
+      "name": "Synthetic meeting note",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "return [{ json: { source: 'SYNTHETIC_MEETING_NOTE', note: \"Meeting: School fair planning\\nACTION | owner=Alex | task=Ask the PTA for volunteer slots | due=2026-10-07 | time=18:00 | email=pta@example.invalid\\nACTION | owner=Sam | task=Confirm snack list | due=2026-10-08 | time= | email=\\nACTION | owner=Lee | task=Check bus schedule | due= | time= | email=\" } }];"
+      }
+    },
+    {
+      "id": "draft-review",
+      "name": "Extract and draft review packet",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        680,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "\nconst input = $input.first().json;\nif (input.source !== 'SYNTHETIC_MEETING_NOTE' || typeof input.note !== 'string') {\n  throw new Error('Expected synthetic meeting note fixture');\n}\nconst lines = input.note.split(/\\r?\\n/);\nconst meeting = (lines.find(line => line.startsWith('Meeting:')) || '').slice(8).trim();\nconst actions = [];\nconst issues = [];\nfor (const [index, line] of lines.entries()) {\n  if (!line.startsWith('ACTION |')) continue;\n  const fields = {};\n  for (const segment of line.split('|').slice(1)) {\n    const equals = segment.indexOf('=');\n    if (equals > 0) fields[segment.slice(0, equals).trim()] = segment.slice(equals + 1).trim();\n  }\n  const id = 'A' + String(actions.length + 1).padStart(2, '0');\n  if (!fields.task || !fields.owner) {\n    issues.push({ line: index + 1, reason: 'Missing task or owner' });\n    continue;\n  }\n  const dueText = fields.due || '';\n  const dueTimestamp = /^\\d{4}-\\d{2}-\\d{2}$/.test(dueText)\n    ? Date.parse(dueText + 'T00:00:00Z') : NaN;\n  const validDue = !Number.isNaN(dueTimestamp) &&\n    new Date(dueTimestamp).toISOString().slice(0, 10) === dueText;\n  const validTime = /^([01]\\d|2[0-3]):[0-5]\\d$/.test(fields.time || '');\n  const calendarDraft = validDue && validTime ? {\n    title: fields.task, localDate: fields.due, localTime: fields.time,\n    timeZone: 'America/Los_Angeles', attendee: fields.owner,\n    note: 'Proposed only. Confirm duration and participants before adding to a calendar.'\n  } : null;\n  const emailDraft = fields.email ? {\n    to: fields.email, subject: 'School fair: ' + fields.task,\n    body: 'Hi,\\n\\nCould you help us with: ' + fields.task + '?\\n\\nThanks,\\nThe family',\n    note: 'Draft only; confirm recipient and wording.'\n  } : null;\n  const reviewReasons = [];\n  if (!validDue) reviewReasons.push('Confirm due date');\n  if (fields.time && !validTime) reviewReasons.push('Invalid proposed time');\n  if (!calendarDraft) reviewReasons.push('No calendar proposal without a valid date and time');\n  actions.push({ id, task: fields.task, owner: fields.owner, due: validDue ? fields.due : null,\n    calendarDraft, emailDraft, reviewReasons });\n}\nreturn [{ json: { meeting, source: input.source, status: 'PENDING_HUMAN_REVIEW',\n  actions, issues, externalWrites: 0 } }];"
+      }
+    },
+    {
+      "id": "approval-gate",
+      "name": "Human approval gate - default pending",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        300
+      ],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "\nconst packet = $input.first().json;\n// Human reviewer must edit this sample decision after inspecting every action.\n// There are no downstream integration nodes even when approved.\nconst decision = { approved: false, approver: '', reviewedActionIds: [] };\nconst ids = packet.actions.map(action => action.id);\nconst complete = decision.approved === true && decision.approver.trim().length > 0 &&\n  ids.length > 0 && ids.every(id => decision.reviewedActionIds.includes(id)) &&\n  decision.reviewedActionIds.length === ids.length && packet.issues.length === 0;\nreturn [{ json: { ...packet, approval: {\n  status: complete ? 'APPROVED_FOR_MANUAL_HANDOFF' : 'PENDING_HUMAN_REVIEW',\n  approver: complete ? decision.approver : null,\n  reviewedActionIds: complete ? ids : [],\n  note: 'Approval is a local demonstration. No calendar or email write is connected.'\n}, externalWrites: 0 } }];"
+      }
+    }
+  ],
+  "connections": {
+    "Run synthetic sample": {
+      "main": [
+        [
+          {
+            "node": "Synthetic meeting note",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Synthetic meeting note": {
+      "main": [
+        [
+          {
+            "node": "Extract and draft review packet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract and draft review packet": {
+      "main": [
+        [
+          {
+            "node": "Human approval gate - default pending",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "tags": []
+}
